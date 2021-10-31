@@ -27,7 +27,7 @@ class generator;
 
     task  run();
         t = new();
-        for (i = o; i < 50; i++) begin
+        for (i = 0; i < 50; ++i) begin
             t.randomize();
             mbx.put(t);
             $display(" [ GEN ] - Random data OK.");
@@ -47,6 +47,7 @@ class driver;
     transaction t;
     mailbox mbx;
     virtual multiplier16bits_intf vif;
+    event done;
 
     function new(mailbox mbx);
         this.mbx = mbx;
@@ -104,9 +105,11 @@ class scoreboard;
             temp = t.a * t.b;
             if (temp == t.y) begin
                 $display(" [ SCO ] - TEST PASSED!");
+                #10;
             end
             else begin
-                display(" [ SCO ] - TEST FAIL!");
+                $display(" [ SCO ] - TEST FAIL!");
+                #10;
             end
         end
     endtask //
@@ -135,7 +138,7 @@ class environment;
 
     task  run();
         mon.vif = vif;
-        dri.vif = vif;
+        drv.vif = vif;
 
         gen.done = ggdone;
         drv.done = ggdone;   
@@ -149,7 +152,7 @@ class environment;
     endtask //
 endclass //environment
 
-mudole tb();
+module tb();
     environment env;
     mailbox gdmbx, msmbx;
     multiplier16bits_intf vif();
@@ -159,9 +162,9 @@ mudole tb();
     initial begin
         gdmbx = new();
         msmbx = new();
-        env = new(gdmbx, msmbx)
+        env = new(gdmbx, msmbx);
         env.vif = vif;
         env.run();
-        #10;
+        #500;
     end
 endmodule
