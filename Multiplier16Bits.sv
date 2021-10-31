@@ -81,8 +81,33 @@ class monitor;
             t.b = vif.b;
             t.y = vif.y;
             mbx.put(t);
-            $display(" [ MON ] - Monitor receive the data from interface.");
+            $display(" [ MON ] - Monitor receive the data from interface and send to scoreboard.");
             #10; 
         end
     endtask //
 endclass //monitor
+
+class scoreboard;
+    transaction t;
+    mailbox mbx;
+    virtual multiplier16bits_intf vif;
+    bit [31:0] temp;
+
+    function new(mailbox mbx);
+        this.mbx = mbx;
+    endfunction //new()
+
+    task  run();
+        t = new();
+        forever begin
+            mbx.get(t);
+            temp = t.a * t.b;
+            if (temp == t.y) begin
+                $display(" [ SCO ] - TEST PASSED!");
+            end
+            else begin
+                display(" [ SCO ] - TEST FAIL!");
+            end
+        end
+    endtask //
+endclass //scoreboard
