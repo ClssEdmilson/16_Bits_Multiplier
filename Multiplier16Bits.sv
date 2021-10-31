@@ -64,3 +64,25 @@ class driver;
         end
     endtask //
 endclass //driver
+
+class monitor;
+    transaction t;
+    mailbox mbx;
+    virtual multiplier16bits_intf vif;
+
+    function new(mailbox mbx);
+        this.mbx = mbx;
+    endfunction //new()
+
+    task  run();
+        t = new();
+        forever begin
+            t.a = vif.a;
+            t.b = vif.b;
+            t.y = vif.y;
+            mbx.put(t);
+            $display(" [ MON ] - Monitor receive the data from interface.");
+            #10; 
+        end
+    endtask //
+endclass //monitor
