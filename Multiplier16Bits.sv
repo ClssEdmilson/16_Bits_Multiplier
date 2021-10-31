@@ -1,7 +1,7 @@
 module multiplier16bits(
     input [15:0] a,
     input [15:0] b,
-    output[31:0] y;
+    output[31:0] y
 );
 
 assign y = a * b;
@@ -9,8 +9,8 @@ assign y = a * b;
 endmodule
 
 class transaction;
-    randc bit [15:0] a,
-    randc bit [15:0] b,
+    randc bit [15:0] a;
+    randc bit [15:0] b;
     bit [31:0] y;
 endclass //transaction
 
@@ -35,6 +35,11 @@ class generator;
             @(done);
         end
     endtask //
-
-
 endclass //generator
+
+interface multiplier16bits_intf();
+    logic [15:0] a;
+    logic [15:0] b;
+    logic [31:0] y;    
+endinterface //multiplier16bits_intf()
+
