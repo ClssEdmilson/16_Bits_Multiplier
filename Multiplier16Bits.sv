@@ -111,3 +111,40 @@ class scoreboard;
         end
     endtask //
 endclass //scoreboard
+
+class environment;
+
+    generator gen;
+    driver drv;
+    monitor mon;
+    scoreboard sco;
+    mailbox gdmbx, msmbx;
+    virtual multiplier16bits_intf vif;
+    event ggdone;
+
+    function new(mailbox gdmbx, mailbox msmbx);
+        this.gdmbx = gdmbx;
+        this.msmbx = msmbx;
+
+        gen = new(gdmbx);
+        drv = new(gdmbx);
+
+        mon = new(msmbx);
+        sco = new(msmbx);
+    endfunction //new()
+
+    task  run();
+        mon.vif = vif;
+        dri.vif = vif;
+
+        gen.done = ggdone;
+        drv.done = ggdone;   
+
+        fork
+            gen.run();
+            drv.run();
+            mon.run();
+            sco.run();
+        join_any   
+    endtask //
+endclass //environment
