@@ -148,3 +148,20 @@ class environment;
         join_any   
     endtask //
 endclass //environment
+
+mudole tb();
+    environment env;
+    mailbox gdmbx, msmbx;
+    multiplier16bits_intf vif();
+
+    multiplier16bits dut (vif.a, vif.b, vif.y);
+
+    initial begin
+        gdmbx = new();
+        msmbx = new();
+        env = new(gdmbx, msmbx)
+        env.vif = vif;
+        env.run();
+        #10;
+    end
+endmodule
