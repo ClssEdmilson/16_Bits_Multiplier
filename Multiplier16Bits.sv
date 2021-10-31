@@ -30,7 +30,7 @@ class generator;
         for (i = o; i < 50; i++) begin
             t.randomize();
             mbx.put(t);
-            $display(" [ GEN ] - Generator send data.");
+            $display(" [ GEN ] - Random data OK.");
             #10;
             @(done);
         end
@@ -43,3 +43,24 @@ interface multiplier16bits_intf();
     logic [31:0] y;    
 endinterface //multiplier16bits_intf()
 
+class driver;
+    transaction t;
+    mailbox mbx;
+    virtual multiplier16bits_intf vif;
+
+    function new(mailbox mbx);
+        this.mbx = mbx;
+    endfunction //new()
+
+    task  run();
+        t = new();
+        forever begin
+            mbx.get(t);
+            vif.a = t.a;
+            vif.b = t.b;
+            $display(" [ DRV ] - Driver send the data to interface.");
+            #10;
+            ->done;
+        end
+    endtask //
+endclass //driver
